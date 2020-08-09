@@ -1,14 +1,13 @@
-class Api::RegistrationsController < ApplicationController
+class RegistrationsController < ApplicationController
     def create
       user = User.create!(
-        email: params["data"]["user"]["email"],
-        password: params["data"]["user"]["password"],
-        password_confirmation: params["data"]["user"]["password"],
-        first_name: params["data"]["user"]["first_name"],
-        last_name: params["data"]["user"]["last_name"],
+        email: params["data"]["email"],
+        password: params["data"]["password"],
+        password_confirmation: params["data"]["password_confirmation"],
+        first_name: params["data"]["first_name"],
+        last_name: params["data"]["last_name"],
         
       )
-  
       if user
         cookies.encrypted[:user_id] = user.id
         render json: {
@@ -16,7 +15,7 @@ class Api::RegistrationsController < ApplicationController
           user: user
         }
       else
-        render json: { status: 422 }
+        render json: { status: 422, params: params }
       end
     end
   end

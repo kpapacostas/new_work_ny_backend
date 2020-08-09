@@ -1,13 +1,36 @@
-class Api::SessionsController < ApplicationController
-    def create
-      
+class SessionsController < ApplicationController
+  def create
+    user = User
+            .find_by(email: params["data"]["email"])
+            .try(:authenticate, params["data"]["password"])
+    if user
+      cookies.encrypted[:user_id] = user.id
+
+      render json: {
+        status: :created,
+        logged_in: true,
+        user: user
+      }
+    else
+      render json: { status: 401 }
     end
-  
-    def logged_in
-      
+  end
+
+  def logged_in
+    if @current_user
+      render json: {
+        logged_in: true,
+        user: @current_user
+      } 
+    else
+      render json: {
+        logged_in: false
+      }
     end
-  
-    def logout
-      
-    end
+  end
+
+  def logout
+    reset_session
+    render json: { status: 200, logged_out: true}
+  end
   end
