@@ -5,7 +5,7 @@ class SessionsController < ApplicationController
             .try(:authenticate, params["data"]["password"])
     if user
       cookies.encrypted[:user_id] = user.id
-
+      @current_user = user
       render json: {
         status: :created,
         logged_in: true,
